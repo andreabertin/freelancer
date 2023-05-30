@@ -1,0 +1,22 @@
+{
+  "name": "freelancer",
+  "version": "1.0.0",
+  "description": "Freelancer project commands",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreabertin/freelancer.git"
+  },
+  "author": "Andrea Bertin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreabertin/freelancer/issues"
+  },
+  "homepage": "https://github.com/andreabertin/freelancer#readme"
+}

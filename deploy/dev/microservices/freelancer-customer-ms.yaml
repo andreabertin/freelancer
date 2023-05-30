@@ -1,0 +1,168 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-sidecar-config-map
+data:
+  promtail.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+      log_level: "debug"
+    positions:
+      filename: /tmp/positions.yaml
+    clients: # Specify target
+      - url: http://loki:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name:  "flcstapi" 
+        static_configs: 
+          - targets: 
+              - localhost 
+            labels:
+              app: "customer-ms"
+              __path__: /logs/*.log # Any file .log in the EmptyDir Volume.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freelancer-customer-ms-db-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: "customer_ms"
+  POSTGRES_USER: "andreabertin"
+  POSTGRES_PASSWORD: "andreabertin"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: freelancer-customer-ms-db-pv
+  labels:
+    app: freelancer-customer-ms-db-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi # Sets PV Volume
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: freelancer-customer-ms-db-pv-claim  # Sets name of PVC
+  labels:
+    app: freelancer-customer-ms-db
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany  # Sets read and write access
+  resources:
+    requests:
+      storage: 5Gi  # Sets volume size
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancer-customer-ms-db  # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freelancer-customer-ms-db
+  template:
+    metadata:
+      labels:
+        app: freelancer-customer-ms-db
+    spec:
+      containers:
+        - name: freelancer-customer-ms-db
+          image: postgres:15.3-alpine3.18 # Sets Image
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: freelancer-customer-ms-db-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: freelancer-customer-ms-db-data
+      volumes:
+        - name: freelancer-customer-ms-db-data
+          persistentVolumeClaim:
+            claimName: freelancer-customer-ms-db-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freelancer-customer-ms
+  labels:
+    app: freelancer-customer-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freelancer-customer-ms
+  template:
+    metadata:
+      labels:
+        app: freelancer-customer-ms
+    spec:
+      containers:
+        - name: freelancer-customer-ms
+          image: andreabertin89/flcstapi:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: shared-logs # shared space monitored with Promtail
+              mountPath: /logs
+        - name: promtail
+          image: grafana/promtail:master
+          args:
+            - "-config.file=/etc/promtail/promtail.yaml" # Found in the ConfigMap
+          volumeMounts:
+            - name: config
+              mountPath: /etc/promtail
+            - name: shared-logs # shared space
+              mountPath: /logs
+      volumes:
+        - name: config
+          configMap:
+            name: promtail-sidecar-config-map
+        - name: shared-logs  # shared space monitored with Promtail
+          emptyDir:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: freelancer-customer-ms
+  labels:
+    app: freelancer-customer-ms
+spec:
+  type: LoadBalancer
+  selector:
+    app: freelancer-customer-ms
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: freelancer-customer-ms
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: freelancer-customer-ms
+                port:
+                  number: 3000

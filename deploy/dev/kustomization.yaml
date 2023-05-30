@@ -1,0 +1,11 @@
+namespace: freelancer
+resources:
+  - keycloak.yaml
+  - grafana.yaml
+  - kafka.yaml
+  - microservices/freelancer-customer-ms.yaml
+configMapGenerator:
+  - name: keycloak-config
+    files:
+      - realms/freelancer_it.realm.json
+      - realms/freelancer_app.realm.json
