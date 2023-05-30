@@ -8,25 +8,25 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class CustomerCreatedHandler implements IEventHandler<CustomerCreatedEvent> {
 
   constructor(
-    @InjectRepository(Customer)
-    private readonly repository: Repository<Customer>
+    // @InjectRepository(CustomerEntity)
+    // private readonly repository: Repository<CustomerEntity>
   ) {
   }
 
 
   async handle(event: CustomerCreatedEvent): Promise<any> {
-    const entity: Customer = {
-      id: null,
-      firstName: event.firstName,
-      lastName: event.lastName,
-      companyName: event.companyName,
-      vatCode: event.vatCode,
-      taxCode: event.taxCode,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    await this.repository.insert(entity);
+    // const entity: CustomerEntity = {
+    //   id: null,
+    //   firstName: event.firstName,
+    //   lastName: event.lastName,
+    //   companyName: event.companyName,
+    //   vatCode: event.vatCode,
+    //   taxCode: event.taxCode,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date()
+    // };
+    //
+    // await this.repository.insert(entity);
   }
 
 }

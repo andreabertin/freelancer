@@ -1,8 +1,32 @@
-import { Column, DataSource, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AggregateRoot } from "@nestjs/cqrs";
+import { CustomerCreatedEvent } from "../events/customer-created.event";
+
+export type CustomerMandatoryProperties = Readonly<{
+  id: string
+}>
+
+export type CustomerOptionalProperties = Readonly<{
+  firstName: string,
+  lastName: string,
+  companyName: string,
+  vatCode: string,
+  taxCode: string
+}>
+
+export type CustomerProperties =
+  CustomerMandatoryProperties
+  & CustomerOptionalProperties;
 
 @Entity()
-export class Customer {
-  @PrimaryGeneratedColumn()
+export class Customer extends AggregateRoot {
+
+  constructor(properties: CustomerProperties) {
+    super();
+    Object.assign(this, properties);
+  }
+
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -11,10 +35,10 @@ export class Customer {
   @Column()
   lastName: string;
 
-  @Column({ name: 'created_at' })
+  @Column({name: 'created_at'})
   createdAt: Date;
 
-  @Column({ name: 'updated_at' })
+  @Column({name: 'updated_at'})
   updatedAt: Date;
 
   @Column()
@@ -25,4 +49,15 @@ export class Customer {
 
   @Column()
   taxCode: string;
+
+  created() {
+    this.apply(new CustomerCreatedEvent(
+      this.id,
+      this.firstName,
+      this.lastName,
+      this.companyName,
+      this.vatCode,
+      this.taxCode
+    ));
+  }
 }

@@ -1,5 +1,8 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { getEnvVars } from '../orm/database-config-utils';
+import { CreatedAtSubscriber } from "../orm/subscribers/created-at.subscriber";
+import { UpdatedAtSubscriber } from "../orm/subscribers/updated-at.subscriber";
+import { AutoGenIdClearSubscriber } from "../orm/subscribers/auto-gen-id-clear.subscriber";
 
 function sslConfig(envVars) {
   let config = {};
@@ -50,6 +53,11 @@ function buildConnectionOptions(data): TypeOrmModuleOptions {
     migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
     keepConnectionAlive: true,
     migrationsTableName: 'init_migrations',
+    subscribers: [
+      CreatedAtSubscriber,
+      UpdatedAtSubscriber,
+      AutoGenIdClearSubscriber
+    ]
   };
 }
 

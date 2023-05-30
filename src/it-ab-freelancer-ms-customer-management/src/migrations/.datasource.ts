@@ -14,4 +14,5 @@ export default new DataSource({
   synchronize: false,
   migrations: ormConfig.migrations,
   migrationsTableName: ormConfig.migrationsTableName,
+  subscribers: ormConfig.subscribers
 });

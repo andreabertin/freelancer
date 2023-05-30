@@ -3,6 +3,14 @@ import { Controller } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateCustomerCommand } from "@commands/create-customer.command";
 
+interface CreateCustomerDto {
+  taxCode: string;
+  vatCode: string;
+  companyName: string;
+  lastName: string;
+  firstName: string;
+}
+
 @Controller()
 export class CustomerController {
   constructor(
@@ -11,9 +19,10 @@ export class CustomerController {
   ) {
   }
 
-  @EventPattern('customer.create')
-  create(@Payload() customer: CreateCustomerCommand, @Ctx() context: NatsContext) {
-    console.log('hellooooo', customer);
+  @MessagePattern('customer.create')
+  create(
+    @Payload() customer: CreateCustomerDto,
+    @Ctx() context: NatsContext) {
     return this.commandBus.execute(
       new CreateCustomerCommand(
         customer.firstName,
