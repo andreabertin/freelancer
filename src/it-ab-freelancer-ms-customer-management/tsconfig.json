@@ -20,6 +20,8 @@
     "paths": {
       "@entities/*": ["src/entities/*"],
       "@commands/*": ["src/commands/*"],
+      "@queries/*": ["src/queries/*"],
+      "@events/*": ["src/events/*"],
       "@models/*": ["src/models/*"],
       "@resolvers/*": ["src/resolvers/*"],
       "@services/*": ["src/services/*"],

@@ -1,6 +1,7 @@
 import { Customer } from '@models/customer.model';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Client, ClientProxy, Transport } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 
 @Injectable()
 export class CustomerService {
@@ -22,12 +23,10 @@ export class CustomerService {
       id: 'xxxx',
     };
 
-    // return this.client.send('customer.create', p);
-
     return this.customerMsClient.send('customer.create', p);
   }
 
-  async findAll(): Promise<Customer[]> {
-    return [];
+  async findAll(): Promise<Observable<Customer[]>> {
+    return this.customerMsClient.send('customer.find', {});
   }
 }

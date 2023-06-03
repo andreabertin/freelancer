@@ -8,8 +8,9 @@ import msConfig from '@configs/ms.config';
 import { CustomerController } from "./controllers/customer.controller";
 import { CqrsModule } from "@nestjs/cqrs";
 import { CommandHandlers } from "@commands/handlers";
-import { EventHandlers } from "./events/handlers";
+import { EventHandlers } from "@events/handlers";
 import { Customer } from "@entities/customer.entity";
+import { QueryHandlers } from "@queries/handlers";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Customer } from "@entities/customer.entity";
   providers: [
     Logger,
     ...CommandHandlers,
+    ...QueryHandlers,
     ...EventHandlers
   ],
 })

@@ -2,6 +2,7 @@ import { Ctx, EventPattern, MessagePattern, NatsContext, Payload } from "@nestjs
 import { Controller } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateCustomerCommand } from "@commands/create-customer.command";
+import { FindCustomersQuery } from "@queries/find-customers.query";
 
 interface CreateCustomerDto {
   taxCode: string;
@@ -31,6 +32,15 @@ export class CustomerController {
         customer.vatCode,
         customer.taxCode
       )
+    );
+  }
+
+  @MessagePattern('customer.find')
+  find(
+    @Payload() customer: CreateCustomerDto,
+    @Ctx() context: NatsContext) {
+    return this.queryBus.execute(
+      new FindCustomersQuery()
     );
   }
 
