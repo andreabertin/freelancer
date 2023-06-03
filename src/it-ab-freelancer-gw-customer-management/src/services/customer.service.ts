@@ -1,20 +1,14 @@
 import { Customer } from '@models/customer.model';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Client, ClientProxy, Transport } from "@nestjs/microservices";
 
 @Injectable()
 export class CustomerService {
 
-  constructor(private logger: Logger) {
+  constructor(
+    private logger: Logger,
+    @Inject('CUSTOMER_MS') private customerMsClient: ClientProxy) {
   }
-
-  @Client({
-    transport: Transport.NATS,
-    options: {
-      url: 'nats://localhost:4222'
-    },
-  })
-  client: ClientProxy;
 
   async create() {
     const p = {
@@ -30,7 +24,7 @@ export class CustomerService {
 
     // return this.client.send('customer.create', p);
 
-    return this.client.send('customer.create', p);
+    return this.customerMsClient.send('customer.create', p);
   }
 
   async findAll(): Promise<Customer[]> {
