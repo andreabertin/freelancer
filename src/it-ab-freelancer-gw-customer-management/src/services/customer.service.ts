@@ -11,21 +11,7 @@ export class CustomerService {
   @Client({
     transport: Transport.NATS,
     options: {
-      url: 'nats://localhost:4222',
-      queue: 'customers',
-      /**
-       * Use the "Identity" (de)serializers for observing messages for
-       * nest-only deployment.
-       */
-      // serializer: new OutboundMessageIdentitySerializer(),
-      // deserializer: new InboundResponseIdentityDeserializer(),
-
-      /**
-       * Use the "External" (de)serializers for transforming messages to/from
-       * (only) an external responder
-       */
-      // serializer: new OutboundMessageExternalSerializer(),
-      // deserializer: new InboundResponseExternalDeserializer(),
+      url: 'nats://localhost:4222'
     },
   })
   client: ClientProxy;
@@ -44,8 +30,7 @@ export class CustomerService {
 
     // return this.client.send('customer.create', p);
 
-    await this.client.emit('customer.create', p);
-    return p;
+    return this.client.send('customer.create', p);
   }
 
   async findAll(): Promise<Customer[]> {

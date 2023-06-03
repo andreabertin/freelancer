@@ -3,33 +3,34 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { APP_CONFIG_KEY, AppConfig } from '@configs/app.config';
 import logger from '@configs/logging.config';
-import { MicroserviceOptions, NatsOptions, Transport } from "@nestjs/microservices";
-import { InboundMessageIdentityDeserializer } from "./serializers/inbound.serializer";
-import { OutboundResponseIdentitySerializer } from "./serializers/outbound.serializer";
+import { NatsOptions, Transport } from "@nestjs/microservices";
+import { MicroserviceConfig, MS_CONFIG_KEY } from "@configs/ms.config";
 
 async function bootstrap() {
 
-  const i : NatsOptions = {
-    transport: Transport.NATS,
-    options: {
-      url: 'nats://localhost:4222',
-      queue: 'customers'
-    }
-  };
-
   // Creates app as a microservice App
-  const app = await NestFactory.createMicroservice(
-    AppModule,
-    i,
-  );
+  const app = await NestFactory.create(AppModule);
 
   // Sets up logging
   const config = app.get(ConfigService);
   const appConfig = config.getOrThrow<AppConfig>(APP_CONFIG_KEY);
   app.useLogger(logger(appConfig));
 
+  const msConfig = config.getOrThrow<MicroserviceConfig>(MS_CONFIG_KEY);
+  const i : NatsOptions = {
+    transport: Transport[msConfig.transport],
+    options: {
+      url: msConfig.url,
+      queue: msConfig.queue
+    }
+  };
+  app.connectMicroservice(i);
+
+  // Starts all microservices
+  await app.startAllMicroservices();
+
   // Then start listen
-  await app.listen();
+  await app.listen(4000, () => {});
 }
 
 bootstrap();

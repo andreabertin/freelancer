@@ -4,6 +4,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from '@configs/app.config';
 import ormConfig from '@configs/orm.config';
+import msConfig from '@configs/ms.config';
 import { CustomerController } from "./controllers/customer.controller";
 import { CqrsModule } from "@nestjs/cqrs";
 import { CommandHandlers } from "@commands/handlers";
@@ -12,7 +13,7 @@ import { Customer } from "@entities/customer.entity";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({load: [appConfig]}),
+    ConfigModule.forRoot({load: [appConfig, msConfig]}),
     TypeOrmModule.forRoot(ormConfig),
     TypeOrmModule.forFeature([Customer]),
     CqrsModule,
@@ -21,7 +22,6 @@ import { Customer } from "@entities/customer.entity";
   controllers: [CustomerController],
   providers: [
     Logger,
-    // ...DatasourceProviders,
     ...CommandHandlers,
     ...EventHandlers
   ],
