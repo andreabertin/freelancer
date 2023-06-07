@@ -3,9 +3,9 @@ import { CustomerCreatedEvent } from "../customer-created.event";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Customer } from "@entities/customer.entity";
 import { Repository } from "typeorm";
-import { Inject } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { CustomerCreatedIntegrationEvent } from "@integration-events/customer-created.integrationevent";
+import { InjectBroadcaster } from "@decorators/broadcaster.decorator";
 
 @EventsHandler(CustomerCreatedEvent)
 export class CustomerCreatedHandler implements IEventHandler<CustomerCreatedEvent> {
@@ -13,7 +13,7 @@ export class CustomerCreatedHandler implements IEventHandler<CustomerCreatedEven
   constructor(
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
-    @Inject('BROADCASTER')
+    @InjectBroadcaster()
     private client: ClientProxy
   ) {
   }

@@ -12,6 +12,7 @@ import { EventHandlers } from "@events/handlers";
 import { Customer } from "@entities/customer.entity";
 import { QueryHandlers } from "@queries/handlers";
 import { ClientProxyFactory, Transport } from "@nestjs/microservices";
+import { BROADCASTER_TOKEN } from "@decorators/broadcaster.decorator";
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { ClientProxyFactory, Transport } from "@nestjs/microservices";
     ...QueryHandlers,
     ...EventHandlers,
     {
-      provide: 'BROADCASTER',
+      provide: BROADCASTER_TOKEN,
       useFactory: (configService :ConfigService) => {
         const ms = configService.getOrThrow<MicroserviceConfig>(MS_CONFIG_KEY);
         return ClientProxyFactory.create({

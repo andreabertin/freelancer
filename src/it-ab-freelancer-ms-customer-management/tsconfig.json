@@ -20,6 +20,7 @@
     "paths": {
       "@entities/*": ["src/entities/*"],
       "@commands/*": ["src/commands/*"],
+      "@decorators/*": ["src/decorators/*"],
       "@queries/*": ["src/queries/*"],
       "@filters/*": ["src/filters/*"],
       "@events/*": ["src/events/*"],
