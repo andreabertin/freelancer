@@ -51,13 +51,6 @@ export class Customer extends AggregateRoot {
   taxCode: string;
 
   created() {
-    this.apply(new CustomerCreatedEvent(
-      this.id,
-      this.firstName,
-      this.lastName,
-      this.companyName,
-      this.vatCode,
-      this.taxCode
-    ));
+    this.apply(new CustomerCreatedEvent(this.id));
   }
 }

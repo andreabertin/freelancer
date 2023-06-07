@@ -1,32 +1,29 @@
 import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
 import { CustomerCreatedEvent } from "../customer-created.event";
-import { Repository } from "typeorm";
-import { Customer } from "@entities/customer.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Customer } from "@entities/customer.entity";
+import { Repository } from "typeorm";
+import { Inject } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
+import { CustomerCreatedIntegrationEvent } from "@integration-events/customer-created.integrationevent";
 
 @EventsHandler(CustomerCreatedEvent)
 export class CustomerCreatedHandler implements IEventHandler<CustomerCreatedEvent> {
 
   constructor(
-    // @InjectRepository(CustomerEntity)
-    // private readonly repository: Repository<CustomerEntity>
+    @InjectRepository(Customer)
+    private customerRepository: Repository<Customer>,
+    @Inject('BROADCASTER')
+    private client: ClientProxy
   ) {
   }
 
-
   async handle(event: CustomerCreatedEvent): Promise<any> {
-    // const entity: CustomerEntity = {
-    //   id: null,
-    //   firstName: event.firstName,
-    //   lastName: event.lastName,
-    //   companyName: event.companyName,
-    //   vatCode: event.vatCode,
-    //   taxCode: event.taxCode,
-    //   createdAt: new Date(),
-    //   updatedAt: new Date()
-    // };
-    //
-    // await this.repository.insert(entity);
+    const customer = await this.customerRepository.findOneBy({id: event.id})
+    if (customer) {
+      const ie: CustomerCreatedIntegrationEvent = customer;
+      this.client.emit('customer.created', {customer: ie});
+    }
   }
 
 }

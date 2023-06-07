@@ -1,7 +1,7 @@
 import { Customer } from '@models/customer.model';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Client, ClientProxy, Transport } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { ClientProxy } from "@nestjs/microservices";
+import { catchError, last, Observable, of } from "rxjs";
 
 @Injectable()
 export class CustomerService {
@@ -15,15 +15,23 @@ export class CustomerService {
     const p = {
       companyName: '',
       createdAt: undefined,
-      firstName: '',
-      lastName: '',
+      firstName: 'yyy',
+      lastName: 'xxx',
       lastUpdatedAt: undefined,
       taxCode: '',
       vatCode: '',
       id: 'xxxx',
     };
 
-    return this.customerMsClient.send('customer.create', p);
+
+    return this.customerMsClient
+      .send('customer.create', p)
+      .pipe(
+        catchError((err, o) => {
+          this.logger.error(err)
+          return of({error: err})
+        })
+      );
   }
 
   async findAll(): Promise<Observable<Customer[]>> {

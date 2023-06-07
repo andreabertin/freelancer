@@ -5,6 +5,7 @@ import { APP_CONFIG_KEY, AppConfig } from '@configs/app.config';
 import logger from '@configs/logging.config';
 import { NatsOptions, Transport } from "@nestjs/microservices";
 import { MicroserviceConfig, MS_CONFIG_KEY } from "@configs/ms.config";
+import { ValidationPipe } from "@nestjs/common";
 
 async function bootstrap() {
 
@@ -14,6 +15,8 @@ async function bootstrap() {
   // Sets up logging
   const config = app.get(ConfigService);
   const appConfig = config.getOrThrow<AppConfig>(APP_CONFIG_KEY);
+
+  // enables logging capabilities
   app.useLogger(logger(appConfig));
 
   const msConfig = config.getOrThrow<MicroserviceConfig>(MS_CONFIG_KEY);

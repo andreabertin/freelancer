@@ -1,14 +1,29 @@
-import { Ctx, EventPattern, MessagePattern, NatsContext, Payload } from "@nestjs/microservices";
-import { Controller } from "@nestjs/common";
+import { Ctx, MessagePattern, NatsContext, Payload } from "@nestjs/microservices";
+import { Controller, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateCustomerCommand } from "@commands/create-customer.command";
 import { FindCustomersQuery } from "@queries/find-customers.query";
+import { IsNotEmpty, ValidateIf } from "class-validator";
+import { AllExceptionsFilter } from "@filters/exception.filter";
 
-interface CreateCustomerDto {
+export class CreateCustomerDto {
   taxCode: string;
   vatCode: string;
+
+  @ValidateIf(o => !o.lastName && !o.firstName)
+  @IsNotEmpty({
+    context: {
+
+    }
+  })
   companyName: string;
+
+  @ValidateIf(o => !o.companyName)
+  @IsNotEmpty()
   lastName: string;
+
+  @ValidateIf(o => !o.companyName)
+  @IsNotEmpty()
   firstName: string;
 }
 
@@ -21,6 +36,8 @@ export class CustomerController {
   }
 
   @MessagePattern('customer.create')
+  @UsePipes(new ValidationPipe())
+  @UseFilters(new AllExceptionsFilter())
   create(
     @Payload() customer: CreateCustomerDto,
     @Ctx() context: NatsContext) {
