@@ -1,5 +1,3 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
-
 export interface CustomerCreatedIntegrationEvent {
 
   id: string;
