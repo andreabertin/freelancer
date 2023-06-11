@@ -13,9 +13,7 @@ export class CustomerService {
 
   async create() {
     const p = {
-      companyName: '',
       createdAt: undefined,
-      firstName: 'yyy',
       lastName: 'xxx',
       lastUpdatedAt: undefined,
       taxCode: '',

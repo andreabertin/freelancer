@@ -1,5 +1,6 @@
 import ormConfig from '../configs/orm.config';
 import { DataSource } from 'typeorm';
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 console.log(ormConfig.migrations)
 
@@ -14,5 +15,6 @@ export default new DataSource({
   synchronize: false,
   migrations: ormConfig.migrations,
   migrationsTableName: ormConfig.migrationsTableName,
-  subscribers: ormConfig.subscribers
+  subscribers: ormConfig.subscribers,
+  namingStrategy: new SnakeNamingStrategy(),
 });

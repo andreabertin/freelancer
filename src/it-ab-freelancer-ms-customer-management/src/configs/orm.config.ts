@@ -3,6 +3,7 @@ import { getEnvVars } from '../orm/database-config-utils';
 import { CreatedAtSubscriber } from "../orm/subscribers/created-at.subscriber";
 import { UpdatedAtSubscriber } from "../orm/subscribers/updated-at.subscriber";
 import { AutoGenIdClearSubscriber } from "../orm/subscribers/auto-gen-id-clear.subscriber";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 function sslConfig(envVars) {
   let config = {};
@@ -51,6 +52,7 @@ function buildConnectionOptions(data): TypeOrmModuleOptions {
     migrationsTransactionMode: 'all',
     logging: data.ORM_LOGGING || false,
     migrations: [__dirname + '/../migrations/**/*{.ts,.js}'],
+    namingStrategy: new SnakeNamingStrategy(),
     keepConnectionAlive: true,
     migrationsTableName: 'init_migrations',
     subscribers: [
