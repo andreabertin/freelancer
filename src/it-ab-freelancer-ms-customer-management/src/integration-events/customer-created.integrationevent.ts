@@ -1,5 +1,4 @@
 export interface CustomerCreatedIntegrationEvent {
-
   id: string;
   firstName: string;
   lastName: string;
@@ -8,5 +7,5 @@ export interface CustomerCreatedIntegrationEvent {
   companyName: string;
   vatCode: string;
   taxCode: string;
-
+  countryCode: string;
 }
