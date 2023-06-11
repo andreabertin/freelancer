@@ -4,7 +4,8 @@ export class CreateCustomerCommand {
     public readonly lastName: string,
     public readonly companyName: string,
     public readonly vatCode: string,
-    public readonly taxCode: string
+    public readonly taxCode: string,
+    public readonly countryCode: string
   ) {
   }
 

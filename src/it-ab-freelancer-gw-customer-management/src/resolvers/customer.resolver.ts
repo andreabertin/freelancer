@@ -1,11 +1,13 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Customer } from '@models/customer.model';
 import { CustomerService } from '@services/customer.service';
 import { Observable } from "rxjs";
+import { CreateCustomerInput } from "../inputs/create-customer.input";
 
 @Resolver(() => Customer)
 export class CustomerResolver {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(private readonly customerService: CustomerService) {
+  }
 
   @Query(() => [Customer])
   async customers(): Promise<Observable<Customer[]>> {
@@ -13,7 +15,9 @@ export class CustomerResolver {
   }
 
   @Mutation(() => Customer)
-  async createCustomer() {
-    return this.customerService.create();
+  async createCustomer(
+    @Args('command') command: CreateCustomerInput
+  ) {
+    return this.customerService.create(command);
   }
 }

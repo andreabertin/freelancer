@@ -1,7 +1,8 @@
 import { Customer } from '@models/customer.model';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from "@nestjs/microservices";
-import { catchError, last, Observable, of } from "rxjs";
+import { catchError, Observable, of } from "rxjs";
+import { CreateCustomerInput } from "../inputs/create-customer.input";
 
 @Injectable()
 export class CustomerService {
@@ -11,19 +12,16 @@ export class CustomerService {
     @Inject('CUSTOMER_MS') private customerMsClient: ClientProxy) {
   }
 
-  async create() {
-    const p = {
-      createdAt: undefined,
-      lastName: 'xxx',
-      lastUpdatedAt: undefined,
-      taxCode: '',
-      vatCode: '',
-      id: 'xxxx',
-    };
-
-
+  async create(command: CreateCustomerInput) {
     return this.customerMsClient
-      .send('customer.create', p)
+      .send('customer.create', {
+        firstName: command.firstName,
+        lastName: command.lastName,
+        companyName: command.companyName,
+        taxCode: command.taxCode,
+        vatCode: command.vatCode,
+        countryCode: command.countryCode
+      })
       .pipe(
         catchError((err, o) => {
           this.logger.error(err)

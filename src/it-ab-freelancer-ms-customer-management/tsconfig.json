@@ -29,6 +29,7 @@
       "@resolvers/*": ["src/resolvers/*"],
       "@services/*": ["src/services/*"],
       "@configs/*": ["src/configs/*"],
+      "@validators/*": ["src/validators/*"],
     }
   }
 }

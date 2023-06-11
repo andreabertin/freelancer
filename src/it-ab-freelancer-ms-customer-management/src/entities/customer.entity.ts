@@ -11,12 +11,19 @@ export type CustomerOptionalProperties = Readonly<{
   lastName: string,
   companyName: string,
   vatCode: string,
-  taxCode: string
+  taxCode: string,
+  countryCode: string,
 }>
 
 export type CustomerProperties =
   CustomerMandatoryProperties
   & CustomerOptionalProperties;
+
+export const ALLOWED_COUNTRY_CODES = ["IT"];
+
+export function isAllowedCountryCode(cc: string) {
+  return !!ALLOWED_COUNTRY_CODES.find(acc => acc == cc);
+}
 
 @Entity()
 export class Customer extends AggregateRoot {
@@ -29,26 +36,29 @@ export class Customer extends AggregateRoot {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({nullable: true})
   firstName: string;
 
-  @Column()
+  @Column({nullable: true})
   lastName: string;
 
-  @Column({name: 'created_at'})
+  @Column()
   createdAt: Date;
 
-  @Column({name: 'updated_at'})
+  @Column()
   updatedAt: Date;
 
-  @Column()
+  @Column({nullable: true})
   companyName: string;
 
-  @Column()
+  @Column({nullable: true})
   vatCode: string;
 
-  @Column()
+  @Column({nullable: true})
   taxCode: string;
+
+  @Column({nullable: true})
+  countryCode: string;
 
   created() {
     this.apply(new CustomerCreatedEvent(this.id));

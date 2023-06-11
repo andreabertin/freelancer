@@ -30,6 +30,7 @@
     "@nestjs/microservices": "^9.4.2",
     "@nestjs/platform-express": "^9.0.0",
     "@willsoto/nestjs-prometheus": "^5.1.2",
+    "class-validator": "^0.14.0",
     "graphql": "^16.6.0",
     "nats": "^2.14.0",
     "nest-winston": "^1.9.2",
