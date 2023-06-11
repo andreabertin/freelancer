@@ -5,6 +5,7 @@ import { CreateCustomerCommand } from "@commands/create-customer.command";
 import { FindCustomersQuery } from "@queries/find-customers.query";
 import { AllExceptionsFilter } from "@filters/exception.filter";
 import { CreateCustomerDto } from "./dtos/create-customer.dto";
+import { FindCustomerDto } from "./dtos/find-customer.dto";
 
 @Controller()
 @UsePipes(new ValidationPipe())
@@ -34,7 +35,7 @@ export class CustomerController {
 
   @MessagePattern('customer.find')
   find(
-    @Payload() customer: CreateCustomerDto,
+    @Payload() customer: FindCustomerDto,
     @Ctx() context: NatsContext) {
     return this.queryBus.execute(
       new FindCustomersQuery()
