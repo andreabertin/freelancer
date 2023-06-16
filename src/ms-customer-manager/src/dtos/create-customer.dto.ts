@@ -1,5 +1,4 @@
 import { IsNotEmpty, ValidateIf } from "class-validator";
-import { IsAllowedCountry } from "../../validators/is-allowed-country.decorator";
 
 export class CreateCustomerDto {
   @ValidateIf(o => !o.lastName && !o.firstName)
@@ -23,6 +22,5 @@ export class CreateCustomerDto {
   vatCode: string;
 
   @IsNotEmpty()
-  @IsAllowedCountry()
   countryCode: string;
 }

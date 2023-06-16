@@ -24,12 +24,13 @@
       "@queries/*": ["src/queries/*"],
       "@filters/*": ["src/filters/*"],
       "@events/*": ["src/events/*"],
-      "@integration-events/*": ["src/integration-events/*"],
+      "@integration-events/*": ["../@freelancer-events/*"],
       "@models/*": ["src/models/*"],
       "@resolvers/*": ["src/resolvers/*"],
       "@services/*": ["src/services/*"],
       "@configs/*": ["src/configs/*"],
       "@validators/*": ["src/validators/*"],
+      "@dtos/*": ["src/dtos/*"]
     }
   }
 }
