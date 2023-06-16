@@ -20,6 +20,7 @@ async function bootstrap() {
   app.useLogger(logger(appConfig));
 
   const msConfig = config.getOrThrow<MicroserviceConfig>(MS_CONFIG_KEY);
+  console.log(msConfig)
   const i : NatsOptions = {
     transport: Transport[msConfig.transport],
     options: {

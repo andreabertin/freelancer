@@ -33,7 +33,7 @@ export class CustomerController {
     );
   }
 
-  @MessagePattern('customer.find')
+  @MessagePattern('customer.findMany')
   find(
     @Payload() customer: FindCustomerDto,
     @Ctx() context: NatsContext) {
