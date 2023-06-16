@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Customer } from "@entities/customer.entity";
 import { Repository } from "typeorm";
 import { ClientProxy } from "@nestjs/microservices";
-import { CustomerCreatedIntegrationEvent } from "@integration-events/customer-created.integrationevent";
+import { CustomerCreatedIntegrationEvent, EVENT_NAME } from "@integration-events/customer-created.integrationevent";
 import { InjectBroadcaster } from "@decorators/broadcaster.decorator";
 
 @EventsHandler(CustomerCreatedEvent)
@@ -22,7 +22,7 @@ export class CustomerCreatedHandler implements IEventHandler<CustomerCreatedEven
     const customer = await this.customerRepository.findOneBy({id: event.id})
     if (customer) {
       const ie: CustomerCreatedIntegrationEvent = customer;
-      this.client.emit('customer.created', {customer: ie});
+      this.client.emit(EVENT_NAME, {customer: ie});
     }
   }
 

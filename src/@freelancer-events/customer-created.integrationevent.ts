@@ -1,3 +1,5 @@
+export const EVENT_NAME: string = 'customer.created';
+
 export interface CustomerCreatedIntegrationEvent {
   id: string;
   firstName: string;

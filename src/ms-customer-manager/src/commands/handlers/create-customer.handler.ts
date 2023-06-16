@@ -1,5 +1,5 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
-import { CreateCustomerCommand } from "../create-customer.command";
+import { CreateCustomerCommand } from "@commands/create-customer.command";
 import { Customer, CustomerProperties } from "@entities//customer.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
