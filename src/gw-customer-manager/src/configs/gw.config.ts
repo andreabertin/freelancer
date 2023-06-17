@@ -6,18 +6,12 @@ export interface MicroserviceConfig {
   url: string
 }
 
-export interface GatewayConfig {
-  customerMs: MicroserviceConfig;
-}
-
-export const GW_CONFIG_KEY = 'gw';
+export const CUSTOMER_MS_CONFIG_KEY = 'customer_ms';
 
 export default registerAs(
-  GW_CONFIG_KEY,
-  (): GatewayConfig => ({
-    customerMs: {
+  CUSTOMER_MS_CONFIG_KEY,
+  (): MicroserviceConfig => ({
       transport: process.env.CUSTOMER_TRANSPORT || 'NATS',
-      url: process.env.CUSTOMER_TRANSPORT || 'nats://localhost:4222'
-    }
+      url: process.env.CUSTOMER_TRANSPORT_URL || 'nats://localhost:4222'
   }),
 );
