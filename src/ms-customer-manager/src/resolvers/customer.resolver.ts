@@ -1,26 +1,23 @@
-import { Ctx, MessagePattern, NatsContext, Payload } from "@nestjs/microservices";
-import { Controller, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Customer } from "@entities/customer.entity";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateCustomerCommand } from "@commands/create-customer.command";
 import { FindCustomersQuery } from "@queries/find-customers.query";
-import { AllExceptionsFilter } from "@filters/exception.filter";
 import { CreateCustomerDto } from "@dtos/create-customer.dto";
-import { FindCustomerDto } from "@dtos/find-customer.dto";
+import { GraphQLString } from "graphql/type";
 
-@Controller()
-@UsePipes(new ValidationPipe())
-@UseFilters(new AllExceptionsFilter())
-export class CustomerController {
+@Resolver(of => Customer)
+export class CustomersResolver {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {
   }
 
-  @MessagePattern('customer.create')
-  create(
-    @Payload() customer: CreateCustomerDto,
-    @Ctx() context: NatsContext) {
+  @Mutation(r => Customer)
+  async addCustomer(
+    @Args('command', {type: () => CreateCustomerDto})
+      customer: CreateCustomerDto) {
     return this.commandBus.execute(
       new CreateCustomerCommand(
         customer.firstName,
@@ -33,13 +30,10 @@ export class CustomerController {
     );
   }
 
-  @MessagePattern('customer.findMany')
-  find(
-    @Payload() customer: FindCustomerDto,
-    @Ctx() context: NatsContext) {
+  @Query(r => Customer)
+  async findCustomerById(@Args('id', {type: () => GraphQLString}) id: string) {
     return this.queryBus.execute(
       new FindCustomersQuery()
     );
   }
-
 }
